@@ -1,8 +1,14 @@
 {
     "name" : "jinac",
-
     "version" : "v0.1.0",
-
+    "author" : {
+        "Terrance Ford"
+    },
+    "description" : "Exposes C++ computer algebra libraries to JS",
+    "homepage" : "https://github.com/tbonelaforge/jinac",
+    "dependencies" : {
+        "node-gyp" : ">= 0.10.6"
+    },
     "scripts" : {
         "preinstall" : "node-gyp configure && node-gyp build",
         "preuninstall" : "rm -rf build/*"
