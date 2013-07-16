@@ -1,0 +1,4 @@
+This is a addon to node.js which exposes compiled C++ code to javascript programs through the V8 interpreter.
+Eventually, the goal is to provide objects representing mathematical expressions, and ways of manipulating them using computer algebra.
+
+This project was started in response to the growing need for high-performance grading of mathematics in web-based educational software.
