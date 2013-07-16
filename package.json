@@ -2,7 +2,7 @@
     "name" : "jinac",
     "version" : "v0.1.0",
     "author" : {
-        "Terrance Ford"
+        "name" : "Terrance Ford"
     },
     "description" : "Exposes C++ computer algebra libraries to JS",
     "homepage" : "https://github.com/tbonelaforge/jinac",
