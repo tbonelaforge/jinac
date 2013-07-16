@@ -2,8 +2,6 @@
 #include <node.h>
 
 using namespace v8;
-using namespace std;
-
 
 int gcd(int a, int b) {
     int c = a % b;

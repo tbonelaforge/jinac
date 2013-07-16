@@ -1,0 +1,12 @@
+{
+    "name" : "jinac",
+
+    "version" : "v0.1.0",
+
+    "scripts" : {
+        "preinstall" : "node-gyp configure && node-gyp build",
+        "preuninstall" : "rm -rf build/*"
+    },
+
+    "main" : "build/Release/rationalnumber.node"
+}
