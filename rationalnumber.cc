@@ -19,7 +19,7 @@ public :
     static Persistent<FunctionTemplate> persistent_function_template;
     RationalNumber() {}
     ~RationalNumber() {
-        fraction_ = NULL; // Hopefully triggers reclaiming of the cl_RA object's memory.
+        delete &fraction_;
     }
     static Handle<Value> New(const Arguments& args) {
         HandleScope scope;
