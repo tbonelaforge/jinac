@@ -2,3 +2,9 @@ This is a addon to node.js which exposes compiled C++ code to javascript program
 Eventually, the goal is to provide objects representing mathematical expressions, and ways of manipulating them using computer algebra.
 
 This project was started in response to the growing need for high-performance grading of mathematics in web-based educational software.
+
+Dependencies:
+
+CLN - Class Library for Numbers: You must have this package installed on your system in order to install jinac.
+
+http://www.ginac.de/CLN/
