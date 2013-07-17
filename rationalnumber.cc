@@ -19,7 +19,7 @@ public :
     static Persistent<FunctionTemplate> persistent_function_template;
     RationalNumber() {}
     ~RationalNumber() {
-        delete &fraction_;
+        fraction_ = 0;
     }
     static Handle<Value> New(const Arguments& args) {
         HandleScope scope;
