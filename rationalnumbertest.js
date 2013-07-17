@@ -22,3 +22,8 @@ console.log("The second rational instance looks like:\n", rationalInstance2);
 
 var rationalInstance3 = rationalInstance.add(rationalInstance2);
 console.log("The sum is: ", rationalInstance3, "\n!!!1111\n");
+
+
+console.log("After setting the numerator of the result to 6, the result now looks like:\n");
+rationalInstance3.numerator = 6;
+console.log(rationalInstance3);
