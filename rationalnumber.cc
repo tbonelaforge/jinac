@@ -6,21 +6,10 @@
 #include <cln/rational_io.h>
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 
 using namespace v8;
 using namespace cln;
-
-int gcd(int a, int b) {
-    int c = a % b;
-    while(c != 0) {
-        a = b;
-        b = c;
-        c = a % b;
-    }
-    return b;
-}
-
-
 
 class RationalNumber : node::ObjectWrap {
 private :
@@ -29,7 +18,9 @@ private :
 public :
     static Persistent<FunctionTemplate> persistent_function_template;
     RationalNumber() {}
-    ~RationalNumber() {}
+    ~RationalNumber() {
+        fraction_ = NULL; // Hopefully triggers reclaiming of the cl_RA object's memory.
+    }
     static Handle<Value> New(const Arguments& args) {
         HandleScope scope;
         RationalNumber * rationalnumber_instance = new RationalNumber();
@@ -50,6 +41,9 @@ public :
 
         // Prototype.
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("add"), FunctionTemplate::New(Add)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("subtract"), FunctionTemplate::New(Subtract)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("multiply"), FunctionTemplate::New(Multiply)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("divide"), FunctionTemplate::New(Divide)->GetFunction());
 
         constructor_ = Persistent<Function>::New(RationalNumber::persistent_function_template->GetFunction());
 
@@ -93,6 +87,45 @@ public :
         sum->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(sum);
     }
+
+    static Handle<Value> Subtract(const Arguments& args) {
+        HandleScope scope;
+        Local<Object> difference = constructor_->NewInstance();
+        RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction = this_rationalnumber->fraction_ - that_rationalnumber->fraction_;
+        new_rationalnumber_instance->fraction_ = new_fraction;
+        difference->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(difference);
+    }
+
+    static Handle<Value> Multiply(const Arguments& args) {
+        HandleScope scope;
+        Local<Object> product = constructor_->NewInstance();
+        RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction = this_rationalnumber->fraction_ * that_rationalnumber->fraction_;
+        new_rationalnumber_instance->fraction_ = new_fraction;
+        product->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(product);
+    }
+
+    static Handle<Value> Divide(const Arguments& args) {
+        HandleScope scope;
+        Local<Object> quotient = constructor_->NewInstance();
+        RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction = this_rationalnumber->fraction_ / that_rationalnumber->fraction_;
+        new_rationalnumber_instance->fraction_ = new_fraction;
+        quotient->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(quotient);
+    }
+
+
+
 
 };
 
