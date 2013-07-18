@@ -11,6 +11,8 @@
 using namespace v8;
 using namespace cln;
 
+static const cl_RA zero = "0";
+
 class RationalNumber : node::ObjectWrap {
 private :
     static Persistent<Function> constructor_;
@@ -19,7 +21,7 @@ public :
     static Persistent<FunctionTemplate> persistent_function_template;
     RationalNumber() {}
     ~RationalNumber() {
-        fraction_ = 0;
+        fraction_ = zero; // Trigger cleanup of this object's fraction.
     }
     static Handle<Value> New(const Arguments& args) {
         HandleScope scope;
