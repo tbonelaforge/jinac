@@ -10,8 +10,15 @@
 
 using namespace v8;
 using namespace cln;
+using namespace std;
 
 static const cl_RA zero = "0";
+
+string cln_integer_to_string(cl_I integer) {
+    ostringstream outs;
+    fprint(outs, integer);
+    return outs.str();
+}
 
 class RationalNumber : node::ObjectWrap {
 private :
@@ -47,6 +54,7 @@ public :
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("multiply"), FunctionTemplate::New(Multiply)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("divide"), FunctionTemplate::New(Divide)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("power"), FunctionTemplate::New(Power)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("initializeFromString"), FunctionTemplate::New(InitializeFromString)->GetFunction());
 
         constructor_ = Persistent<Function>::New(RationalNumber::persistent_function_template->GetFunction());
 
@@ -54,28 +62,32 @@ public :
     }
 
     static Handle<Value> GetNumerator(Local<String> property, const AccessorInfo& info) {
+        HandleScope scope;
         RationalNumber * rationalnumber_instance = node::ObjectWrap::Unwrap<RationalNumber>(info.Holder());
         cl_I cl_I_numerator = cln::numerator(rationalnumber_instance->fraction_);
-        return Integer::New(cl_I_to_int(cl_I_numerator));
+        return scope.Close(String::New(cln_integer_to_string(cl_I_numerator).c_str()));
     }
 
     static void SetNumerator(Local<String> property, Local<Value> value, const AccessorInfo& info) {
         RationalNumber * rationalnumber_instance = node::ObjectWrap::Unwrap<RationalNumber>(info.Holder());
         cl_I old_denominator = cln::denominator(rationalnumber_instance->fraction_);
-        cl_I new_numerator = value->Int32Value();
+        v8::String::Utf8Value numerator_string(value);
+        cl_I new_numerator = *numerator_string;
         rationalnumber_instance->fraction_ = new_numerator / old_denominator;
     }
 
     static Handle<Value> GetDenominator(Local<String> property, const AccessorInfo& info) {
+        HandleScope scope;
         RationalNumber * rationalnumber_instance = node::ObjectWrap::Unwrap<RationalNumber>(info.Holder());
         cl_I cl_I_denominator = cln::denominator(rationalnumber_instance->fraction_);
-        return Integer::New(cl_I_to_int(cl_I_denominator));
+        return scope.Close(String::New(cln_integer_to_string(cl_I_denominator).c_str()));
     }
 
     static void SetDenominator(Local<String> property, Local<Value> value, const AccessorInfo& info) {
         RationalNumber * rationalnumber_instance = node::ObjectWrap::Unwrap<RationalNumber>(info.Holder());
         cl_I old_numerator = cln::numerator(rationalnumber_instance->fraction_);
-        cl_I new_denominator = value->Int32Value();
+        v8::String::Utf8Value denominator_string(value);
+        cl_I new_denominator = *denominator_string;
         rationalnumber_instance->fraction_ = old_numerator / new_denominator;
     }
 
@@ -147,6 +159,15 @@ public :
             ThrowException(Exception::TypeError(String::New("Irrational number!")));
             return scope.Close(Undefined());
         }
+    }
+
+    static Handle<Value> InitializeFromString(const Arguments& args) {
+        HandleScope scope;
+        RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        v8::String::Utf8Value string_pointer(args[0]);
+        cl_RA new_fraction = *string_pointer;
+        self->fraction_ = new_fraction;
+        return scope.Close(Undefined());
     }
 
 

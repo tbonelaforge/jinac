@@ -54,6 +54,25 @@ function testing() {
     var perfectRoot = perfectSquare.power(oneHalf);
     console.log("The result of (4/9)^(1/2) is:\n", perfectRoot);
 
+    try {
+        var imperfectRoot = new RationalNumber();
+        imperfectRoot.numerator = 2;
+        imperfectRoot.denominator = 3;
+        var result = imperfectRoot.power(oneHalf);
+    } catch(error) {
+        console.log("Got error object:\n", error.toString());
+    }
+
+    var bigFraction = new RationalNumber();
+    bigFraction.initializeFromString("12/13");
+    console.log("The bigFraction's numerator is:\n", bigFraction.numerator);
+    console.log("The bigFraction's denominator is:\n", bigFraction.denominator);
+
+    console.log("About to construct a really, really big fraction.\n");
+    bigFraction.initializeFromString("11111111111111111111111111111111111111111111111111/2222222222222222222222222222222222222222222222222222");
+    console.log("The really, really big fraction's numerator is:\n", bigFraction.numerator);
+    console.log("The really, really big fraction's denominator is:\n", bigFraction.denominator);
+
 }
 
 testing();
