@@ -42,6 +42,18 @@ function testing() {
 
     console.log("The quotient of 1/2 and 3/4 is:\n", rationalInstance6);
 
+    var perfectSquare = new RationalNumber();
+
+    perfectSquare.numerator = 4;
+    perfectSquare.denominator = 9;
+    
+    var oneHalf = new RationalNumber();
+    oneHalf.numerator = 1;
+    oneHalf.denominator = 2;
+
+    var perfectRoot = perfectSquare.power(oneHalf);
+    console.log("The result of (4/9)^(1/2) is:\n", perfectRoot);
+
 }
 
 testing();

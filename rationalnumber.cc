@@ -46,6 +46,7 @@ public :
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("subtract"), FunctionTemplate::New(Subtract)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("multiply"), FunctionTemplate::New(Multiply)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("divide"), FunctionTemplate::New(Divide)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("power"), FunctionTemplate::New(Power)->GetFunction());
 
         constructor_ = Persistent<Function>::New(RationalNumber::persistent_function_template->GetFunction());
 
@@ -124,6 +125,28 @@ public :
         new_rationalnumber_instance->fraction_ = new_fraction;
         quotient->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(quotient);
+    }
+
+    static Handle<Value> Power(const Arguments& args) {
+        HandleScope scope;
+        Local<Object> result_object = constructor_->NewInstance();
+        RationalNumber * base = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * exponent = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA base_fraction = base->fraction_;
+        cl_RA exponent_fraction = exponent->fraction_;
+        cl_I exponent_numerator = cln::numerator(exponent_fraction);
+        cl_I exponent_denominator = cln::denominator(exponent_fraction);
+        cl_RA root_fraction, result_fraction;
+        if (cln::rootp( base_fraction, exponent_denominator, &root_fraction)) {
+            result_fraction = cln::expt( root_fraction, exponent_numerator);
+            new_rationalnumber_instance->fraction_ = result_fraction;
+            result_object->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result_object);
+        } else {
+            ThrowException(Exception::TypeError(String::New("Irrational number!")));
+            return scope.Close(Undefined());
+        }
     }
 
 
