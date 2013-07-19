@@ -73,6 +73,38 @@ function testing() {
     console.log("The really, really big fraction's numerator is:\n", bigFraction.numerator);
     console.log("The really, really big fraction's denominator is:\n", bigFraction.denominator);
 
+    var integerFraction = new RationalNumber();
+    integerFraction.initializeFromString("12");
+    console.log("The integer fraction's numerator is:\n", integerFraction.numerator);
+    console.log("The integer fraction's denominator is:\n", integerFraction.denominator);
+
+
+    var selfFraction = new RationalNumber();
+    selfFraction.initializeFromString("12/13");
+    var otherFraction = new RationalNumber();
+    otherFraction.initializeFromString("12");
+    console.log("The result of testing whether 12/13 is equal to 12 is:\n");
+    console.log(selfFraction.isEqualTo(otherFraction));
+
+    otherFraction.initializeFromString("24/26");
+    console.log("The result of testing whether 12/13 is equal to 24/26 is:\n");
+    console.log(selfFraction.isEqualTo(otherFraction));
+
+    console.log("The result of testing whether 12/13 is less than 24/26 is:\n");
+    console.log(selfFraction.isLessThan(otherFraction));
+
+    otherFraction.initializeFromString("12");
+    console.log("The result of testing whether 12 is greater than 12/13 is:\n");
+    console.log(otherFraction.isGreaterThan(selfFraction));
+
+    otherFraction.initializeFromString("24/26");
+    console.log("The result of testing whether 12/13 is less than or equal to 24/26 is:\n");
+    console.log(selfFraction.isLessThanOrEqualTo(otherFraction));
+
+    otherFraction.initializeFromString("14/13");
+    console.log("The result of testing whether 12/13 is greater than or equal to 14/13 is:\n");
+    console.log(selfFraction.isGreaterThanOrEqualTo(otherFraction));
+
 }
 
 testing();

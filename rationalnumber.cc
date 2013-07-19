@@ -55,6 +55,11 @@ public :
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("divide"), FunctionTemplate::New(Divide)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("power"), FunctionTemplate::New(Power)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("initializeFromString"), FunctionTemplate::New(InitializeFromString)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isEqualTo"), FunctionTemplate::New(IsEqualTo)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isLessThan"), FunctionTemplate::New(IsLessThan)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isGreaterThan"), FunctionTemplate::New(IsGreaterThan)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isLessThanOrEqualTo"), FunctionTemplate::New(IsLessThanOrEqualTo)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isGreaterThanOrEqualTo"), FunctionTemplate::New(IsGreaterThanOrEqualTo)->GetFunction());
 
         constructor_ = Persistent<Function>::New(RationalNumber::persistent_function_template->GetFunction());
 
@@ -168,6 +173,71 @@ public :
         cl_RA new_fraction = *string_pointer;
         self->fraction_ = new_fraction;
         return scope.Close(Undefined());
+    }
+
+    static Handle<Value> IsEqualTo(const Arguments& args) {
+        HandleScope scope;
+        RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        cl_RA self_fraction = self->fraction_;
+        cl_RA other_fraction = other->fraction_;
+        if (self_fraction == other_fraction) {
+            return scope.Close(True());
+        } else {
+            return scope.Close(False());
+        }
+    }
+
+    static Handle<Value> IsLessThan(const Arguments& args) {
+        HandleScope scope;
+        RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        cl_RA self_fraction = self->fraction_;
+        cl_RA other_fraction = other->fraction_;
+        if (self_fraction < other_fraction) {
+            return scope.Close(True());
+        } else {
+            return scope.Close(False());
+        }
+    }
+
+    static Handle<Value> IsGreaterThan(const Arguments& args) {
+        HandleScope scope;
+        RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        cl_RA self_fraction = self->fraction_;
+        cl_RA other_fraction = other->fraction_;
+        if (self_fraction > other_fraction) {
+            return scope.Close(True());
+        } else {
+            return scope.Close(False());
+        }
+    }
+
+    static Handle<Value> IsLessThanOrEqualTo(const Arguments& args) {
+        HandleScope scope;
+        RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        cl_RA self_fraction = self->fraction_;
+        cl_RA other_fraction = other->fraction_;
+        if (self_fraction <= other_fraction) {
+            return scope.Close(True());
+        } else {
+            return scope.Close(False());
+        }
+    }
+
+    static Handle<Value> IsGreaterThanOrEqualTo(const Arguments& args) {
+        HandleScope scope;
+        RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        cl_RA self_fraction = self->fraction_;
+        cl_RA other_fraction = other->fraction_;
+        if (self_fraction >= other_fraction) {
+            return scope.Close(True());
+        } else {
+            return scope.Close(False());
+        }
     }
 
 
