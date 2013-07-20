@@ -4,6 +4,7 @@
 #include <cln/rational.h>
 #include <cln/integer.h>
 #include <cln/rational_io.h>
+#include <cln/exception.h>
 #include <iostream>
 #include <sstream>
 #include <cstdlib>
@@ -12,7 +13,8 @@ using namespace v8;
 using namespace cln;
 using namespace std;
 
-static const cl_RA zero = "0";
+static const cl_RA ZERO = "0";
+static const int FACTORIAL_MAX = 45000;
 
 string cln_integer_to_string(cl_I integer) {
     ostringstream outs;
@@ -28,7 +30,7 @@ public :
     static Persistent<FunctionTemplate> persistent_function_template;
     RationalNumber() {}
     ~RationalNumber() {
-        fraction_ = zero; // Trigger cleanup of this object's fraction.
+        fraction_ = ZERO; // Trigger cleanup of this object's fraction.
     }
     static Handle<Value> New(const Arguments& args) {
         HandleScope scope;
@@ -60,6 +62,8 @@ public :
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isGreaterThan"), FunctionTemplate::New(IsGreaterThan)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isLessThanOrEqualTo"), FunctionTemplate::New(IsLessThanOrEqualTo)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isGreaterThanOrEqualTo"), FunctionTemplate::New(IsGreaterThanOrEqualTo)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("factorial"), FunctionTemplate::New(Factorial)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("getFactorialMax"), FunctionTemplate::New(GetFactorialMax)->GetFunction());
 
         constructor_ = Persistent<Function>::New(RationalNumber::persistent_function_template->GetFunction());
 
@@ -240,6 +244,45 @@ public :
         }
     }
 
+    static Handle<Value> Factorial(const Arguments& args) {
+
+        
+        HandleScope scope;
+        RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        cl_RA self_fraction = self->fraction_;
+        if (denominator(self_fraction) != 1) { // Not an integer.
+            ThrowException(Exception::TypeError(String::New("Factorial only allowed for integers.")));
+            return scope.Close(Undefined());
+        }
+        if (numerator(self_fraction) < 0) { // Negative integer.
+            ThrowException(Exception::TypeError(String::New("Factorial only allowed for positive numbers.")));
+            return scope.Close(Undefined());
+        }
+        if (numerator(self_fraction) > FACTORIAL_MAX) { // Too big to compute in under a second.
+            ThrowException(Exception::TypeError(String::New("Cannot take factorial (number too big)")));
+            return scope.Close(Undefined());
+        }
+        
+        // Assert: The cl_I can be converted to an unsigned long int,
+        // without throwing an exception.
+        unsigned long c_integer = cl_I_to_ulong(numerator(self_fraction));
+        Local<Object> result = constructor_->NewInstance();
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        new_rationalnumber_instance->fraction_ = cln::factorial(c_integer);
+        result->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(result);
+    
+    }
+
+    static Handle<Value> GetFactorialMax(const Arguments& args) {
+        HandleScope scope;
+        Local<Object> factorial_max = constructor_->NewInstance();
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        new_rationalnumber_instance->fraction_ = FACTORIAL_MAX;
+        factorial_max->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(factorial_max);
+    }
+    
 
 
 

@@ -105,6 +105,42 @@ function testing() {
     console.log("The result of testing whether 12/13 is greater than or equal to 14/13 is:\n");
     console.log(selfFraction.isGreaterThanOrEqualTo(otherFraction));
 
+    var smallInteger = new RationalNumber();
+    smallInteger.numerator = 3125;
+    var factorialResult = smallInteger.factorial();
+    console.log("The result of taking the factorial of 3125 is:\n", factorialResult.numerator, "/", factorialResult.denominator);
+
+    smallInteger.initializeFromString("1/2");
+    console.log("ABout to try and take the factorial of 1/2.\n");
+    try {
+        factorialResult = smallInteger.factorial();
+    } catch(error) {
+        console.log("Got error:\n", error.toString());
+    }
+    smallInteger.initializeFromString("-23");
+    console.log("About to try and take the factorial of -23.\n");
+    try {
+        factorialResult = smallInteger.factorial();
+    } catch(error) {
+        console.log("Got error:\n", error.toString());
+    }
+
+    console.log("About to try and take the factorial of:.\n", RationalNumber.prototype.getFactorialMax().numerator);
+    try {
+        factorialResult = RationalNumber.prototype.getFactorialMax().factorial();
+    } catch(error) {
+        console.log("Got error:\n", error.toString());
+    }
+    console.log("The result is:\n", factorialResult.numerator);
+    var oneMore = new RationalNumber();
+    oneMore.initializeFromString("1");
+    console.log("About to try and take the factorial of:\n", RationalNumber.prototype.getFactorialMax().add(oneMore).numerator);
+    try {
+        factorialResult = RationalNumber.prototype.getFactorialMax().add(oneMore).factorial();
+    } catch(error) {
+        console.log("Got error:\n", error.toString());
+    }
+
 }
 
 testing();
