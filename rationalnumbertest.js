@@ -141,6 +141,27 @@ function testing() {
         console.log("Got error:\n", error.toString());
     }
 
+    var five = new RationalNumber();
+    five.initializeFromString("5");
+    var three = new RationalNumber();
+    three.initializeFromString("3");
+    var r = five.modulus(three);
+    console.log("The result of 5%3 is:\n", r.numerator + "/" + r.denominator);
+
+    five.denominator = 2;
+    try {
+        five.modulus(three);
+    } catch(error) {
+        console.log("5/2 % 3Got error:\n", error.toString());
+    }
+    five.denominator = 1;
+    three.denominator = 2;
+    try {
+        five.modulus(three);
+    } catch(error) {
+        console.log("5 % 3/2 Got error:\n", error.toString());
+    }
+
 }
 
 testing();

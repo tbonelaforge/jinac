@@ -64,6 +64,7 @@ public :
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("isGreaterThanOrEqualTo"), FunctionTemplate::New(IsGreaterThanOrEqualTo)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("factorial"), FunctionTemplate::New(Factorial)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("getFactorialMax"), FunctionTemplate::New(GetFactorialMax)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("modulus"), FunctionTemplate::New(Modulus)->GetFunction());
 
         constructor_ = Persistent<Function>::New(RationalNumber::persistent_function_template->GetFunction());
 
@@ -250,15 +251,15 @@ public :
         HandleScope scope;
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         cl_RA self_fraction = self->fraction_;
-        if (denominator(self_fraction) != 1) { // Not an integer.
+        if (cln::denominator(self_fraction) != 1) { // Not an integer.
             ThrowException(Exception::TypeError(String::New("Factorial only allowed for integers.")));
             return scope.Close(Undefined());
         }
-        if (numerator(self_fraction) < 0) { // Negative integer.
+        if (cln::numerator(self_fraction) < 0) { // Negative integer.
             ThrowException(Exception::TypeError(String::New("Factorial only allowed for positive numbers.")));
             return scope.Close(Undefined());
         }
-        if (numerator(self_fraction) > FACTORIAL_MAX) { // Too big to compute in under a second.
+        if (cln::numerator(self_fraction) > FACTORIAL_MAX) { // Too big to compute in under a second.
             ThrowException(Exception::TypeError(String::New("Cannot take factorial (number too big)")));
             return scope.Close(Undefined());
         }
@@ -282,7 +283,27 @@ public :
         factorial_max->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(factorial_max);
     }
-    
+
+    static Handle<Value> Modulus(const Arguments& args) {
+        HandleScope scope;
+        RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        if (cln::denominator(this_rationalnumber->fraction_) != 1 ||
+            cln::denominator(that_rationalnumber->fraction_) != 1) {
+            ThrowException(Exception::TypeError(String::New("Modulus only allowed for integers.")));
+            return scope.Close(Undefined());
+        }
+        Local<Object> remainder = constructor_->NewInstance();
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction = cln::mod(
+                                      cln::numerator(this_rationalnumber->fraction_),
+                                      cln::numerator(that_rationalnumber->fraction_)
+                                      );
+        new_rationalnumber_instance->fraction_ = new_fraction;
+        remainder->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(remainder);
+        
+    }
 
 
 
