@@ -79,6 +79,17 @@ function testing() {
     console.log("The integer fraction's denominator is:\n", integerFraction.denominator);
 
 
+    bigFraction.initializeFromString("12/13");
+    var zero = new RationalNumber();
+    console.log("About to try dividing by zero.\n");
+    try {
+        var divideByZero = bigFraction.divide(zero);
+        console.log("12/13 / 0 is:\n", divideByZero.numerator + "/" + divideByZero.denominator);
+    } catch(error) {
+        console.log("The result of dividing 12/13 by 0 got error:\n", error.toString());
+    }
+
+
     var selfFraction = new RationalNumber();
     selfFraction.initializeFromString("12/13");
     var otherFraction = new RationalNumber();
@@ -161,6 +172,41 @@ function testing() {
     } catch(error) {
         console.log("5 % 3/2 Got error:\n", error.toString());
     }
+
+    five.initializeFromString("-5");
+    three.initializeFromString("3");
+    r = five.modulus(three);
+    console.log("The result of -5 % 3 is:\n", r.numerator + "/" + r.denominator);
+
+    five.initializeFromString("5");
+    three.initializeFromString("-3");
+    r = five.modulus(three);
+    console.log("The result of 5 % -3 is:\n", r.numerator + "/" + r.denominator);
+
+    five.initializeFromString("-5");
+    three.initializeFromString("-3");
+    r = five.modulus(three);
+    console.log("The result of -5 % -3 is:\n", r.numerator + "/" + r.denominator);
+
+    five.initializeFromString("5");
+    three.initializeFromString("3");
+    r = three.modulus(five);
+    console.log("The result of 3 % 5 is:\n", r.numerator + "/" + r.denominator);
+
+    three.initializeFromString("0");
+    try {
+        r = five.modulus(three);
+        console.log("The result of 5 % 0 is:\n", r.numerator + "/" + r.denominator);
+    } catch(error) {
+        console.log("5 % 0 resulted in error:\n", error.toString());
+    }
+
+    five.initializeFromString("5/3");
+    three.initializeFromString("3/2");
+    r = five.modulus(three);
+    console.log("The result of 5/3 % 3/2 is:\n", r.numerator + "/" + r.denominator);
+    
+
 
 }
 

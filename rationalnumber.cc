@@ -15,6 +15,7 @@ using namespace std;
 
 static const cl_RA ZERO = "0";
 static const int FACTORIAL_MAX = 45000;
+static const char * DIVIDE_BY_ZERO_ERROR = "Cannot divide by zero.";
 
 string cln_integer_to_string(cl_I integer) {
     ostringstream outs;
@@ -142,6 +143,10 @@ public :
         Local<Object> quotient = constructor_->NewInstance();
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        if (that_rationalnumber->fraction_ == 0) {
+            ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
+            return scope.Close(Undefined());
+        }
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
         cl_RA new_fraction = this_rationalnumber->fraction_ / that_rationalnumber->fraction_;
         new_rationalnumber_instance->fraction_ = new_fraction;
@@ -288,17 +293,15 @@ public :
         HandleScope scope;
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
-        if (cln::denominator(this_rationalnumber->fraction_) != 1 ||
-            cln::denominator(that_rationalnumber->fraction_) != 1) {
-            ThrowException(Exception::TypeError(String::New("Modulus only allowed for integers.")));
+        cl_RA D = this_rationalnumber->fraction_;
+        cl_RA d = that_rationalnumber->fraction_;
+        if ( d == 0 ) {
+            ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
             return scope.Close(Undefined());
         }
         Local<Object> remainder = constructor_->NewInstance();
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
-        cl_RA new_fraction = cln::mod(
-                                      cln::numerator(this_rationalnumber->fraction_),
-                                      cln::numerator(that_rationalnumber->fraction_)
-                                      );
+        cl_RA new_fraction = D - d * cln::floor1(D / d);
         new_rationalnumber_instance->fraction_ = new_fraction;
         remainder->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(remainder);
