@@ -63,6 +63,14 @@ function testing() {
         console.log("Got error object:\n", error.toString());
     }
 
+    var perfectCube = new RationalNumber();
+    perfectCube.initializeFromString("-27/8");
+    var negativeOneThird = new RationalNumber();
+    negativeOneThird.initializeFromString("-1/3");
+
+    var perfectRoot = perfectCube.power(negativeOneThird);
+    console.log("The result of (-27/8)^(-1/3) is:\n", perfectRoot.numerator + "/" + perfectRoot.denominator);
+
     var bigFraction = new RationalNumber();
     bigFraction.initializeFromString("12/13");
     console.log("The bigFraction's numerator is:\n", bigFraction.numerator);
