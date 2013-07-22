@@ -213,6 +213,10 @@ function testing() {
     three.initializeFromString("3/2");
     r = five.modulus(three);
     console.log("The result of 5/3 % 3/2 is:\n", r.numerator + "/" + r.denominator);
+
+    var zero = new RationalNumber();
+    var one = zero.power(zero);
+    console.log("The result of 0^0 is:\n", one.numerator + "/" + one.denominator);
     
 
 

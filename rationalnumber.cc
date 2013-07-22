@@ -177,7 +177,7 @@ public :
             }
         } else { // E.g. x^(1/3)
             cl_RA positive_base_fraction = cln::abs(base_fraction);
-            cl_RA sign = cln::signum(base_fraction);
+            cl_RA sign = ( cln::signum(base_fraction) < 0 ) ? -1 : 1;
             if (cln::rootp(positive_base_fraction, exponent_denominator, &root_fraction)) {
                 result_fraction = sign * cln::expt(root_fraction, exponent_numerator);
                 new_rationalnumber_instance->fraction_ = result_fraction;
