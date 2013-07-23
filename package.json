@@ -1,6 +1,6 @@
 {
     "name" : "jinac",
-    "version" : "v0.1.14",
+    "version" : "v0.1.16",
     "author" : {
         "name" : "Terrance Ford"
     },
@@ -10,7 +10,7 @@
         "node-gyp" : ">= 0.10.6"
     },
     "scripts" : {
-        "preinstall" : "node-gyp configure && node-gyp build",
+        "preinstall" : "sudo apt-get -y install libcln-dev && node-gyp configure && node-gyp build",
         "preuninstall" : "rm -rf build/*"
     },
     "main" : "build/Release/rationalnumber.node"
