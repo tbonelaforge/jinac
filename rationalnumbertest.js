@@ -218,7 +218,14 @@ function testing() {
     var one = zero.power(zero);
     console.log("The result of 0^0 is:\n", one.numerator + "/" + one.denominator);
     
-
+    var negativeOne = new RationalNumber();
+    negativeOne.initializeFromString("-1");
+    try {
+        var inf = zero.power(negativeOne);
+        console.log("Taking zero to the power of negative one gave result:\n", inf.numerator + "/" + inf.denominator);
+    } catch(error) {
+        console.log("Taking zero to the power of negative one resulted in error:\n", error.toString());
+    }
 
 }
 

@@ -162,6 +162,10 @@ public :
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
         cl_RA base_fraction = base->fraction_;
         cl_RA exponent_fraction = exponent->fraction_;
+        if (base_fraction == 0 && exponent_fraction < 0) { // Can't raise zero to negative power.
+            ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
+            return scope.Close(Undefined());
+        }
         cl_I exponent_numerator = cln::numerator(exponent_fraction);
         cl_I exponent_denominator = cln::denominator(exponent_fraction);
         cl_RA root_fraction, result_fraction;
