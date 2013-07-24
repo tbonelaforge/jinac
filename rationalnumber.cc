@@ -16,12 +16,92 @@ using namespace std;
 static const cl_RA ZERO = "0";
 static const int FACTORIAL_MAX = 45000;
 static const char * DIVIDE_BY_ZERO_ERROR = "Cannot divide by zero.";
+static const char * BAD_INTEGER_SYNTAX = "Cannot parse integer from given notation.";
+static const char * BAD_FRACTION_SYNTAX = "Cannot parse fraction from given notation.";
 
 string cln_integer_to_string(cl_I integer) {
     ostringstream outs;
     fprint(outs, integer);
     return outs.str();
 }
+
+
+int matches_integer_pattern(const char * input) {
+    int i = 0;
+    int state = 0;
+    char c = '\0';
+
+    while((c = input[i++]) != '\0') {
+        if (state == 0) {
+            if (c == '-') {
+                state = 1;
+            } else if (isdigit(c)) {
+                state = 2;
+            } else {
+                return 0;
+            }
+        } else if (state == 1) {
+            if (isdigit(c)) {
+                state = 2;
+            } else {
+                return 0;
+            }
+        } else if (state == 2) {
+            if (isdigit(c)) {
+                state = 2;
+            } else {
+                return 0;
+            }
+        }
+    }
+    return (state == 2) ? 1 : 0;
+}
+
+int matches_fraction_pattern(const char * input) {
+    int i = 0;
+    int state = 0;
+    char c = '\0';
+
+    while ((c = input[i++]) != '\0') {
+        if (state == 0) {
+            if (c == '-') {
+                state = 1;
+            } else if (isdigit(c)) {
+                state = 2;
+            } else {
+                return 0;
+            }
+        } else if (state == 1) {
+            if (isdigit(c)) {
+                state = 2;
+            } else {
+                return 0;
+            }
+        } else if (state == 2) {
+            if (isdigit(c)) {
+                state = 2;
+            } else if (c == '/') {
+                state = 3;
+            } else {
+                return 0;
+            }
+        } else if (state == 3) {
+            if (isdigit(c)) {
+                state = 4;
+            } else {
+                return 0;
+            }
+        } else if (state == 4) {
+            if (isdigit(c)) {
+                state = 4;
+            } else {
+                return 0;
+            }
+        } // End state case statement.
+    }
+    return (state == 2 || state == 4) ? 1 : 0;
+}
+
 
 class RationalNumber : node::ObjectWrap {
 private :
@@ -83,6 +163,10 @@ public :
         RationalNumber * rationalnumber_instance = node::ObjectWrap::Unwrap<RationalNumber>(info.Holder());
         cl_I old_denominator = cln::denominator(rationalnumber_instance->fraction_);
         v8::String::Utf8Value numerator_string(value);
+        if (!matches_integer_pattern(*numerator_string)) {
+            ThrowException(Exception::TypeError(String::New(BAD_INTEGER_SYNTAX)));
+            return;
+        }
         cl_I new_numerator = *numerator_string;
         rationalnumber_instance->fraction_ = new_numerator / old_denominator;
     }
@@ -98,6 +182,10 @@ public :
         RationalNumber * rationalnumber_instance = node::ObjectWrap::Unwrap<RationalNumber>(info.Holder());
         cl_I old_numerator = cln::numerator(rationalnumber_instance->fraction_);
         v8::String::Utf8Value denominator_string(value);
+        if (!matches_integer_pattern(*denominator_string)) {
+            ThrowException(Exception::TypeError(String::New(BAD_INTEGER_SYNTAX)));
+            return;
+        }
         cl_I new_denominator = *denominator_string;
         if (new_denominator == 0) {
             ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
@@ -208,6 +296,10 @@ public :
         HandleScope scope;
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         v8::String::Utf8Value string_pointer(args[0]);
+        if (!matches_fraction_pattern(*string_pointer)) {
+            ThrowException(Exception::TypeError(String::New(BAD_FRACTION_SYNTAX)));
+            return scope.Close(Undefined());
+        }
         cl_RA new_fraction = *string_pointer;
         self->fraction_ = new_fraction;
         return scope.Close(Undefined());
