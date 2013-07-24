@@ -227,6 +227,12 @@ function testing() {
         console.log("Taking zero to the power of negative one resulted in error:\n", error.toString());
     }
 
+    var negative2 = new RationalNumber();
+    negative2.initializeFromString('-2');
+    oneFourth = negative2.power(negative2);
+    console.log("The result of (-2)^(-2) is:\n", oneFourth.numerator + '/' + oneFourth.denominator);
+    
+
 }
 
 testing();

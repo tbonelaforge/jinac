@@ -173,6 +173,12 @@ public :
         cl_I exponent_numerator = cln::numerator(exponent_fraction);
         cl_I exponent_denominator = cln::denominator(exponent_fraction);
         cl_RA root_fraction, result_fraction;
+        if (exponent_denominator == 1) { // Integer power.
+            result_fraction = cln::expt(base_fraction, exponent_numerator);
+            new_rationalnumber_instance->fraction_ = result_fraction;
+            result_object->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result_object);
+        }
         if (cln::evenp(exponent_denominator)) { // E.g. x^(1/2)
             if (cln::rootp(base_fraction, exponent_denominator, &root_fraction)) {
                 result_fraction = cln::expt( root_fraction, exponent_numerator);
