@@ -1,14 +1,11 @@
 {
     "name" : "jinac",
-    "version" : "v0.1.18",
+    "version" : "v0.1.19",
     "author" : {
         "name" : "Terrance Ford"
     },
     "description" : "Exposes C++ computer algebra libraries to JS",
     "homepage" : "https://github.com/tbonelaforge/jinac",
-    "dependencies" : {
-        "node-gyp" : ">= 0.10.6"
-    },
     "scripts" : {
         "preinstall" : "sudo apt-get -y install libcln-dev && node-gyp rebuild",
         "preuninstall" : "rm -rf build/*"
