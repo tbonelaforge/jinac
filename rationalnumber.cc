@@ -99,6 +99,10 @@ public :
         cl_I old_numerator = cln::numerator(rationalnumber_instance->fraction_);
         v8::String::Utf8Value denominator_string(value);
         cl_I new_denominator = *denominator_string;
+        if (new_denominator == 0) {
+            ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
+            return;
+        }
         rationalnumber_instance->fraction_ = old_numerator / new_denominator;
     }
 

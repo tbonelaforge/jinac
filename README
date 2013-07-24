@@ -3,8 +3,15 @@ Eventually, the goal is to provide objects representing mathematical expressions
 
 This project was started in response to the growing need for high-performance grading of mathematics in web-based educational software.
 
+ONLY WORKS ON DEBIAN LINUX!
+
 Dependencies:
 
-CLN - Class Library for Numbers: You must have this package installed on your system in order to install jinac.
+CLN - Class Library for Numbers: You must have this package installed on your system in order to use jinac.
 
 http://www.ginac.de/CLN/
+
+apt-get - The pre-install script for jinac uses apt-get to download the libcln-dev debian package.
+
+
+
