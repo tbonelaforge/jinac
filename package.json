@@ -13,5 +13,5 @@
     "main" : "build/Release/rationalnumber.node",
     "devDependencies": {
         "should":   ">= 1.2.2"
-    },            
+    }
 }
