@@ -10,5 +10,8 @@
         "preinstall" : "node-gyp rebuild",
         "preuninstall" : "rm -rf build/*"
     },
-    "main" : "build/Release/rationalnumber.node"
+    "main" : "build/Release/rationalnumber.node",
+    "devDependencies": {
+        "should":   ">= 1.2.2"
+    },            
 }
