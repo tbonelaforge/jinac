@@ -331,7 +331,6 @@ describe('RationalNumber', function() {
     }
 
     describe('power', function() {
-console.log("About to call runPowerTests.\n");
         runPowerTests();
     });
 
