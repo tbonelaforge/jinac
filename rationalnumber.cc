@@ -196,7 +196,10 @@ public :
 
     static Handle<Value> Add(const Arguments& args) {
         HandleScope scope;
-        Local<Object> sum = constructor_->NewInstance();
+        Persistent<Object> sum = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
+
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
@@ -208,7 +211,9 @@ public :
 
     static Handle<Value> Subtract(const Arguments& args) {
         HandleScope scope;
-        Local<Object> difference = constructor_->NewInstance();
+        Persistent<Object> difference = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
@@ -220,7 +225,9 @@ public :
 
     static Handle<Value> Multiply(const Arguments& args) {
         HandleScope scope;
-        Local<Object> product = constructor_->NewInstance();
+        Persistent<Object> product = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
@@ -232,15 +239,22 @@ public :
 
     static Handle<Value> Divide(const Arguments& args) {
         HandleScope scope;
-        Local<Object> quotient = constructor_->NewInstance();
+        Persistent<Object> quotient = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
+
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction;
         if (that_rationalnumber->fraction_ == 0) {
             ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
-            return scope.Close(Undefined());
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            quotient->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(quotient);
         }
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
-        cl_RA new_fraction = this_rationalnumber->fraction_ / that_rationalnumber->fraction_;
+
+        new_fraction = this_rationalnumber->fraction_ / that_rationalnumber->fraction_;
         new_rationalnumber_instance->fraction_ = new_fraction;
         quotient->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(quotient);
@@ -248,19 +262,25 @@ public :
 
     static Handle<Value> Power(const Arguments& args) {
         HandleScope scope;
-        Local<Object> result_object = constructor_->NewInstance();
+        Persistent<Object> result_object = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
+
         RationalNumber * base = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * exponent = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
         cl_RA base_fraction = base->fraction_;
         cl_RA exponent_fraction = exponent->fraction_;
-        if (base_fraction == 0 && exponent_fraction < 0) { // Can't raise zero to negative power.
-            ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
-            return scope.Close(Undefined());
-        }
         cl_I exponent_numerator = cln::numerator(exponent_fraction);
         cl_I exponent_denominator = cln::denominator(exponent_fraction);
         cl_RA root_fraction, result_fraction;
+        if (base_fraction == 0 && exponent_fraction < 0) { // Can't raise zero to negative power.
+            ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
+            new_rationalnumber_instance->fraction_ = result_fraction;
+            result_object->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result_object);
+        }
+
         if (exponent_denominator == 1) { // Integer power.
             result_fraction = cln::expt(base_fraction, exponent_numerator);
             new_rationalnumber_instance->fraction_ = result_fraction;
@@ -273,9 +293,11 @@ public :
                 new_rationalnumber_instance->fraction_ = result_fraction;
                 result_object->SetInternalField(0, External::New(new_rationalnumber_instance));
                 return scope.Close(result_object);
-            } else {
+            } else { // Imperfect even root.
                 ThrowException(Exception::TypeError(String::New("Irrational number!")));
-                return scope.Close(Undefined());
+                new_rationalnumber_instance->fraction_ = result_fraction;
+                result_object->SetInternalField(0, External::New(new_rationalnumber_instance));
+                return scope.Close(result_object);
             }
         } else { // E.g. x^(1/3)
             cl_RA positive_base_fraction = cln::abs(base_fraction);
@@ -285,9 +307,11 @@ public :
                 new_rationalnumber_instance->fraction_ = result_fraction;
                 result_object->SetInternalField(0, External::New(new_rationalnumber_instance));
                 return scope.Close(result_object);
-            } else {
+            } else { // Imperfect odd root.
                 ThrowException(Exception::TypeError(String::New("Irrational number!")));
-                return scope.Close(Undefined());
+                new_rationalnumber_instance->fraction_ = result_fraction;
+                result_object->SetInternalField(0, External::New(new_rationalnumber_instance));
+                return scope.Close(result_object);
             }
         }
     }
@@ -371,29 +395,39 @@ public :
     }
 
     static Handle<Value> Factorial(const Arguments& args) {
-
-        
         HandleScope scope;
+        Persistent<Object> result = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         cl_RA self_fraction = self->fraction_;
+        cl_RA new_fraction; // In case we need to throw an exception.
         if (cln::denominator(self_fraction) != 1) { // Not an integer.
             ThrowException(Exception::TypeError(String::New("Factorial only allowed for integers.")));
-            return scope.Close(Undefined());
+
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            result->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result);
+            
         }
         if (cln::numerator(self_fraction) < 0) { // Negative integer.
             ThrowException(Exception::TypeError(String::New("Factorial only allowed for positive numbers.")));
-            return scope.Close(Undefined());
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            result->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result);
         }
         if (cln::numerator(self_fraction) > FACTORIAL_MAX) { // Too big to compute in under a second.
             ThrowException(Exception::TypeError(String::New("Cannot take factorial (number too big)")));
-            return scope.Close(Undefined());
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            result->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result);
         }
         
         // Assert: The cl_I can be converted to an unsigned long int,
         // without throwing an exception.
         unsigned long c_integer = cl_I_to_ulong(numerator(self_fraction));
-        Local<Object> result = constructor_->NewInstance();
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+
         new_rationalnumber_instance->fraction_ = cln::factorial(c_integer);
         result->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(result);
@@ -402,7 +436,9 @@ public :
 
     static Handle<Value> GetFactorialMax(const Arguments& args) {
         HandleScope scope;
-        Local<Object> factorial_max = constructor_->NewInstance();
+        Persistent<Object> factorial_max = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
         new_rationalnumber_instance->fraction_ = FACTORIAL_MAX;
         factorial_max->SetInternalField(0, External::New(new_rationalnumber_instance));
@@ -411,17 +447,24 @@ public :
 
     static Handle<Value> Modulus(const Arguments& args) {
         HandleScope scope;
+        Persistent<Object> remainder = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction;
+
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         cl_RA D = this_rationalnumber->fraction_;
         cl_RA d = that_rationalnumber->fraction_;
         if ( d == 0 ) {
             ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
-            return scope.Close(Undefined());
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            remainder->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(remainder);
         }
-        Local<Object> remainder = constructor_->NewInstance();
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
-        cl_RA new_fraction = D - d * cln::floor1(D / d);
+
+        new_fraction = D - d * cln::floor1(D / d);
         new_rationalnumber_instance->fraction_ = new_fraction;
         remainder->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(remainder);
