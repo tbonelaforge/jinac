@@ -46,6 +46,13 @@ describe('RationalNumber', function() {
             var firstFraction = new RationalNumber();
             (firstFraction instanceof RationalNumber).should.eql(true);
         });
+
+        it('should allow initialization from a string.', function() {
+            var secondFraction = new RationalNumber('1/3');
+            (secondFraction instanceof RationalNumber).should.eql(true);
+            secondFraction.numerator.should.eql('1');
+            secondFraction.denominator.should.eql('3');
+        });
     });
 
     describe('numerator', function() {

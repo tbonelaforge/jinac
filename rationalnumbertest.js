@@ -10,6 +10,8 @@ function testing() {
     console.log("The rationalInstance looks like:\n", rationalInstance);
     console.log("Is the rationalInstance instanceof RationalNumber?", (rationalInstance instanceof RationalNumber) ? 'yes' : 'no');
 
+    var initFromConstructor = new RationalNumber('1/3');
+    console.log("The new rationalInstance from constructor looks like:\n", initFromConstructor);
 
     rationalInstance.numerator = 1;
     console.log("After setting the numerator, the instance looks like:\n", rationalInstance);

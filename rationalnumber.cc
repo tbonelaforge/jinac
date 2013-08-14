@@ -119,6 +119,9 @@ public :
         cl_I num(0), den(1);
         rationalnumber_instance->fraction_ = num / den;
         rationalnumber_instance->Wrap(args.This());
+        if (!args[0]->IsUndefined()) {
+            rationalnumber_instance->InitializeFromString(args);
+        }
         return args.This();
     }
     static void Init(Handle<Object> target) {
