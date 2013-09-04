@@ -223,10 +223,10 @@ describe('RationalNumber', function() {
             var oneHalf = new RationalNumber();
             oneHalf.initializeFromString('1/2');
             try {
-                var sevenSixths = oneHalf.add(twoThirds);
+                var sevenSixths = oneHalf.add(2);
                 true.should.eql(false); // Shouldn't get here.
             } catch(e) {
-                (e.indexOf('rational') > -1).should.be.true;
+                (e.toString().indexOf('rational') > -1).should.be.true;
             }
         });
     });
@@ -242,6 +242,17 @@ describe('RationalNumber', function() {
             negativeOneSixth.numerator.should.eql('-1');
             negativeOneSixth.denominator.should.eql('6');
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.subtract(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
     });
 
     describe('multiply', function() {
@@ -255,6 +266,18 @@ describe('RationalNumber', function() {
             oneHalf.numerator.should.eql('1');
             oneHalf.denominator.should.eql('2');
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.multiply(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
+
     });
 
     describe('divide', function() {
@@ -281,6 +304,18 @@ describe('RationalNumber', function() {
                 (error.toString().indexOf('divide by zero') > -1).should.eql(true);
             }
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.divide(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
+
     });
 
     describe('isEqualTo', function() {
@@ -299,6 +334,18 @@ describe('RationalNumber', function() {
             frac2.initializeFromString('5/6');
             frac1.isEqualTo(frac2).should.eql(false);
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.isEqualTo(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
+
     });
 
 
@@ -350,6 +397,17 @@ describe('RationalNumber', function() {
 
     describe('power', function() {
         runPowerTests();
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.power(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
     });
 
 
@@ -377,6 +435,18 @@ describe('RationalNumber', function() {
             frac2.initializeFromString('4/7');
             frac1.isLessThan(frac2).should.eql(false);
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.isLessThan(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
+
     }); // End isLessThan test.
 
     describe('isGreaterThan', function() {
@@ -403,6 +473,18 @@ describe('RationalNumber', function() {
             frac2.initializeFromString('4/7');
             frac1.isGreaterThan(frac2).should.eql(true);
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.isGreaterThan(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
+
     }); // End isGreaterThan test.
 
     describe('isLessThanOrEqualTo', function() {
@@ -429,6 +511,18 @@ describe('RationalNumber', function() {
             frac2.initializeFromString('4/7');
             frac1.isLessThanOrEqualTo(frac2).should.eql(false);
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.isLessThanOrEqualTo(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
+
     }); // End isLessThanOrEqualTo test.
 
     describe('isGreaterThanOrEqualTo', function() {
@@ -455,6 +549,18 @@ describe('RationalNumber', function() {
             frac2.initializeFromString('4/7');
             frac1.isGreaterThanOrEqualTo(frac2).should.eql(true);
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.isGreaterThanOrEqualTo(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
+
     }); // End isGreaterThanOrEqualTo test.
 
 
@@ -544,7 +650,19 @@ describe('RationalNumber', function() {
                 (error.toString().indexOf('divide by zero') > -1).should.eql(true);
             }
         });
-    });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.modulus(2);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.toString().indexOf('rational') > -1).should.be.true;
+            }
+        });
+
+    }); // End modulus block.
 
 
     describe('gcd', function() {
