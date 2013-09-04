@@ -483,15 +483,23 @@ public :
 
     static Handle<Value> GCD(const Arguments& args) {
         HandleScope scope;
-        RationalNumber * first_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
-        RationalNumber * second_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[1]->ToObject());
-        cl_RA a = first_rationalnumber->fraction_;
-        cl_RA b = second_rationalnumber->fraction_;
         cl_RA new_fraction;
         Persistent<Object> result = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        if (!isHandleForRationalNumber(args[0]->ToObject()) ||
+            !isHandleForRationalNumber(args[1]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("GCD only works on rational number objects.")));
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            result->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result);
+        }
+
+        RationalNumber * first_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        RationalNumber * second_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[1]->ToObject());
+        cl_RA a = first_rationalnumber->fraction_;
+        cl_RA b = second_rationalnumber->fraction_;
 
         if (cln::denominator(a) != 1 || cln::denominator(b) != 1) { // GCD requires integer arguments.
             ThrowException(Exception::TypeError(String::New("GCD only allowed for integers.")));

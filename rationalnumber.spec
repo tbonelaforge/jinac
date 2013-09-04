@@ -539,7 +539,7 @@ describe('RationalNumber', function() {
     describe('gcd', function() {
         it('should compute the gcd for integers.', function() {
             var six = new RationalNumber();
-            five.initializeFromString('6');
+            six.initializeFromString('6');
             var three = new RationalNumber();
             three.initializeFromString('3');
             var gcdResult = RationalNumber.gcd(six, three);
@@ -549,7 +549,7 @@ describe('RationalNumber', function() {
 
         it('should compute the gcd for negative integers.', function() {
             var negativeSix = new RationalNumber();
-            five.initializeFromString('-6');
+            negativeSix.initializeFromString('-6');
             var three = new RationalNumber();
             three.initializeFromString('3');
             var gcdResult = RationalNumber.gcd(negativeSix, three);
@@ -576,6 +576,28 @@ describe('RationalNumber', function() {
                 true.should.eql(false); // Should never get here.
             } catch(error) {
                 (error.toString().indexOf('integer') > -1).should.eql(true);
+            }
+        });
+
+        it('should throw an error when both args are non-integer.', function() {
+            var a = new RationalNumber('2/3');
+            var b = new RationalNumber('1/2');
+            try {
+                var result = RationalNumber.gcd(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('integer') > -1).should.eql(true);
+            }
+        });
+
+        it('should throw an error when first arg is not a rational number object.', function() {
+            var a = new RationalNumber('2');
+            var b = "5";
+            try {
+                var result = RationalNumber.gcd(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('rational') > -1).should.eql(true);
             }
         });
     });

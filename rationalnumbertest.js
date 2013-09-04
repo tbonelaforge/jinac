@@ -244,11 +244,19 @@ function testing() {
     var lcmB = new RationalNumber('18');
     var lcmResult = RationalNumber.lcm(lcmA, lcmB);
     console.log("The lcmResult is:\n", lcmResult);
+
     try {
         var bad = RationalNumber.lcm(lcmA, 3);
     } catch(e) {
-        console.log("The result of passing a plain javascript number is:\n", e.toString());
+        console.log("The result of passing a plain javascript number to lcm is:\n", e.toString());
     }
+
+    try {
+        var bad = RationalNumber.gcd(lcmA, 3);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to gcd is:\n", e.toString());
+    }
+
     try {
         var bad = new RationalNumber();
         bad.initializeFromString("poop");
