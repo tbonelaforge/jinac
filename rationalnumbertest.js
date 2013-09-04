@@ -235,6 +235,79 @@ function testing() {
     console.log("The result of (-2)^(-2) is:\n", oneFourth.numerator + '/' + oneFourth.denominator);
 
 
+    try {
+        var bad = (new RationalNumber('3/1')).add(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to add is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).subtract(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to subtract is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).multiply(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to multiply is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).divide(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to divide is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).power(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to power is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).modulus(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to modulus is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isEqualTo(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isEqualTo is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isLessThan(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isLessThan is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isGreaterThan(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isGreaterThan is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isGreaterThan(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isGreaterThan is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isLessThanOrEqualTo(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isLessThanOrEqualTo is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isGreaterThanOrEqualTo(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isGreaterThanOrEqualTo is:\n", e.toString());
+    }
+
+
     var gcdA = new RationalNumber('15');
     var gcdB = new RationalNumber('18');
     var gcdResult = RationalNumber.gcd(gcdA, gcdB);
@@ -263,6 +336,11 @@ function testing() {
     } catch(e) {
         console.log("The result of initializing from poop is:\n", e.toString());
     }
+
+    var zeroTest = RationalNumber.gcd(new RationalNumber('0'), new RationalNumber('0'));
+    console.log("The gcd of zero and zero is:\n", zeroTest);
+    zeroTest = RationalNumber.lcm(new RationalNumber('0'), new RationalNumber('0'));
+    console.log("The lcm of zero and zero is:\n", zeroTest);
 
 }
 

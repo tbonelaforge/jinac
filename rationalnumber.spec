@@ -218,6 +218,17 @@ describe('RationalNumber', function() {
             sevenSixths.numerator.should.eql('7');
             sevenSixths.denominator.should.eql('6');
         });
+
+        it('should throw an error, when given anything other than another rational number object.', function() {
+            var oneHalf = new RationalNumber();
+            oneHalf.initializeFromString('1/2');
+            try {
+                var sevenSixths = oneHalf.add(twoThirds);
+                true.should.eql(false); // Shouldn't get here.
+            } catch(e) {
+                (e.indexOf('rational') > -1).should.be.true;
+            }
+        });
     });
 
     describe('subtract', function() {
@@ -590,7 +601,7 @@ describe('RationalNumber', function() {
             }
         });
 
-        it('should throw an error when first arg is not a rational number object.', function() {
+        it('should throw an error when second arg is not a rational number object.', function() {
             var a = new RationalNumber('2');
             var b = "5";
             try {
@@ -600,7 +611,118 @@ describe('RationalNumber', function() {
                 (error.toString().indexOf('rational') > -1).should.eql(true);
             }
         });
+
+        it('should throw an error when first arg is not a rational number object.', function() {
+            var b = new RationalNumber('2');
+            var a = "5";
+            try {
+                var result = RationalNumber.gcd(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('rational') > -1).should.eql(true);
+            }
+        });
+
+
+        it('gcd(0,0) defined as 0.', function() {
+            var b = new RationalNumber('0');
+            var a = new RationalNumber('0');
+            var result = RationalNumber.gcd(a, b);
+            result.numerator.should.eql('0');
+            result.denominator.should.eql('1');
+        });
+
+
     });
+
+
+    describe('lcm', function() {
+        it('should compute the lcm for integers.', function() {
+            var six = new RationalNumber();
+            six.initializeFromString('6');
+            var three = new RationalNumber();
+            three.initializeFromString('3');
+            var lcmResult = RationalNumber.lcm(six, three);
+            lcmResult.numerator.should.eql('6');
+            lcmResult.denominator.should.eql('1');
+        });
+
+        it('should compute the lcm for negative integers.', function() {
+            var negativeSix = new RationalNumber();
+            negativeSix.initializeFromString('-6');
+            var three = new RationalNumber();
+            three.initializeFromString('3');
+            var lcmResult = RationalNumber.lcm(negativeSix, three);
+            lcmResult.numerator.should.eql('6');
+            lcmResult.denominator.should.eql('1');
+        });
+
+        it('should throw an error when the first arg is non-integer.', function() {
+            var a = new RationalNumber('1/2');
+            var b = new RationalNumber('2');
+            try {
+                var result = RationalNumber.lcm(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('integer') > -1).should.eql(true);
+            }
+        });
+
+        it('should throw an error when the second arg is non-integer.', function() {
+            var a = new RationalNumber('2');
+            var b = new RationalNumber('1/2');
+            try {
+                var result = RationalNumber.lcm(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('integer') > -1).should.eql(true);
+            }
+        });
+
+        it('should throw an error when both args are non-integer.', function() {
+            var a = new RationalNumber('2/3');
+            var b = new RationalNumber('1/2');
+            try {
+                var result = RationalNumber.lcm(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('integer') > -1).should.eql(true);
+            }
+        });
+
+        it('should throw an error when second arg is not a rational number object.', function() {
+            var a = new RationalNumber('2');
+            var b = "5";
+            try {
+                var result = RationalNumber.lcm(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('rational') > -1).should.eql(true);
+            }
+        });
+
+        it('should throw an error when first arg is not a rational number object.', function() {
+            var b = new RationalNumber('2');
+            var a = "5";
+            try {
+                var result = RationalNumber.lcm(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('rational') > -1).should.eql(true);
+            }
+        });
+
+
+        it('lcm(0,0) defined as 0.', function() {
+            var b = new RationalNumber('0');
+            var a = new RationalNumber('0');
+            var result = RationalNumber.lcm(a, b);
+            result.numerator.should.eql('0');
+            result.denominator.should.eql('1');
+        });
+
+
+    }); // End lcm block.
 
 
 });

@@ -209,11 +209,20 @@ public :
         Persistent<Object> sum = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+        cl_RA new_fraction;
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("add only works on rational number objects.")));
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            sum->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(sum);
+        }
 
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
-        cl_RA new_fraction = this_rationalnumber->fraction_ + that_rationalnumber->fraction_;
+        new_fraction = this_rationalnumber->fraction_ + that_rationalnumber->fraction_;
         new_rationalnumber_instance->fraction_ = new_fraction;
         sum->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(sum);
@@ -224,10 +233,20 @@ public :
         Persistent<Object> difference = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("subtract only works on rational number objects.")));
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            difference->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(difference);
+        }
+
+
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
-        cl_RA new_fraction = this_rationalnumber->fraction_ - that_rationalnumber->fraction_;
+        new_fraction = this_rationalnumber->fraction_ - that_rationalnumber->fraction_;
         new_rationalnumber_instance->fraction_ = new_fraction;
         difference->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(difference);
@@ -238,10 +257,19 @@ public :
         Persistent<Object> product = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("multiply only works on rational number objects.")));
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            product->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(product);
+        }
+
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
-        cl_RA new_fraction = this_rationalnumber->fraction_ * that_rationalnumber->fraction_;
+        new_fraction = this_rationalnumber->fraction_ * that_rationalnumber->fraction_;
         new_rationalnumber_instance->fraction_ = new_fraction;
         product->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(product);
@@ -252,11 +280,18 @@ public :
         Persistent<Object> quotient = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA new_fraction;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("divide only works on rational number objects.")));
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            quotient->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(quotient);
+        }
 
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
-        cl_RA new_fraction;
         if (that_rationalnumber->fraction_ == 0) {
             ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
             new_rationalnumber_instance->fraction_ = new_fraction;
@@ -275,15 +310,25 @@ public :
         Persistent<Object> result_object = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        cl_RA root_fraction, result_fraction;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("power only works on rational number objects.")));
+            new_rationalnumber_instance->fraction_ = result_fraction;
+            result_object->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result_object);
+        }
+
 
         RationalNumber * base = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * exponent = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+
         cl_RA base_fraction = base->fraction_;
         cl_RA exponent_fraction = exponent->fraction_;
         cl_I exponent_numerator = cln::numerator(exponent_fraction);
         cl_I exponent_denominator = cln::denominator(exponent_fraction);
-        cl_RA root_fraction, result_fraction;
+
         if (base_fraction == 0 && exponent_fraction < 0) { // Can't raise zero to negative power.
             ThrowException(Exception::TypeError(String::New(DIVIDE_BY_ZERO_ERROR)));
             new_rationalnumber_instance->fraction_ = result_fraction;
@@ -341,6 +386,12 @@ public :
 
     static Handle<Value> IsEqualTo(const Arguments& args) {
         HandleScope scope;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("isEqualTo only works on rational number objects.")));
+            return scope.Close(False());
+        }
+
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         cl_RA self_fraction = self->fraction_;
@@ -354,6 +405,12 @@ public :
 
     static Handle<Value> IsLessThan(const Arguments& args) {
         HandleScope scope;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("isLessThan only works on rational number objects.")));
+            return scope.Close(False());
+        }
+
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         cl_RA self_fraction = self->fraction_;
@@ -367,6 +424,12 @@ public :
 
     static Handle<Value> IsGreaterThan(const Arguments& args) {
         HandleScope scope;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("isGreaterThan only works on rational number objects.")));
+            return scope.Close(False());
+        }
+
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         cl_RA self_fraction = self->fraction_;
@@ -380,6 +443,12 @@ public :
 
     static Handle<Value> IsLessThanOrEqualTo(const Arguments& args) {
         HandleScope scope;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("isLessThanOrEqualTo only works on rational number objects.")));
+            return scope.Close(False());
+        }
+
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         cl_RA self_fraction = self->fraction_;
@@ -393,6 +462,12 @@ public :
 
     static Handle<Value> IsGreaterThanOrEqualTo(const Arguments& args) {
         HandleScope scope;
+
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("isGreaterThanOrEqualTo only works on rational number objects.")));
+            return scope.Close(False());
+        }
+
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * other = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         cl_RA self_fraction = self->fraction_;
@@ -413,6 +488,7 @@ public :
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         cl_RA self_fraction = self->fraction_;
         cl_RA new_fraction; // In case we need to throw an exception.
+
         if (cln::denominator(self_fraction) != 1) { // Not an integer.
             ThrowException(Exception::TypeError(String::New("Factorial only allowed for integers.")));
 
@@ -463,6 +539,13 @@ public :
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
         cl_RA new_fraction;
 
+        if (!isHandleForRationalNumber(args[0]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("modulus only works on rational number objects.")));
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            remainder->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(remainder);
+        }
+
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         cl_RA D = this_rationalnumber->fraction_;
@@ -488,6 +571,7 @@ public :
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+
         if (!isHandleForRationalNumber(args[0]->ToObject()) ||
             !isHandleForRationalNumber(args[1]->ToObject())) {
             ThrowException(Exception::TypeError(String::New("GCD only works on rational number objects.")));
@@ -527,6 +611,7 @@ public :
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+
         if (!isHandleForRationalNumber(args[0]->ToObject()) ||
             !isHandleForRationalNumber(args[1]->ToObject())) {
             ThrowException(Exception::TypeError(String::New("LCM only works on rational number objects.")));
