@@ -536,4 +536,49 @@ describe('RationalNumber', function() {
     });
 
 
+    describe('gcd', function() {
+        it('should compute the gcd for integers.', function() {
+            var six = new RationalNumber();
+            five.initializeFromString('6');
+            var three = new RationalNumber();
+            three.initializeFromString('3');
+            var gcdResult = RationalNumber.gcd(six, three);
+            gcdResult.numerator.should.eql('3');
+            gcdResult.denominator.should.eql('1');
+        });
+
+        it('should compute the gcd for negative integers.', function() {
+            var negativeSix = new RationalNumber();
+            five.initializeFromString('-6');
+            var three = new RationalNumber();
+            three.initializeFromString('3');
+            var gcdResult = RationalNumber.gcd(negativeSix, three);
+            gcdResult.numerator.should.eql('3');
+            gcdResult.denominator.should.eql('1');
+        });
+
+        it('should throw an error when the first arg is non-integer.', function() {
+            var a = new RationalNumber('1/2');
+            var b = new RationalNumber('2');
+            try {
+                var result = RationalNumber.gcd(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('integer') > -1).should.eql(true);
+            }
+        });
+
+        it('should throw an error when the second arg is non-integer.', function() {
+            var a = new RationalNumber('2');
+            var b = new RationalNumber('1/2');
+            try {
+                var result = RationalNumber.gcd(a, b);
+                true.should.eql(false); // Should never get here.
+            } catch(error) {
+                (error.toString().indexOf('integer') > -1).should.eql(true);
+            }
+        });
+    });
+
+
 });

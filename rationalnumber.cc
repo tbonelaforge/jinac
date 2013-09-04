@@ -102,6 +102,8 @@ int matches_fraction_pattern(const char * input) {
     return (state == 2 || state == 4) ? 1 : 0;
 }
 
+bool isHandleForRationalNumber(v8::Handle<v8::Object>);
+
 
 class RationalNumber : node::ObjectWrap {
 private :
@@ -130,6 +132,10 @@ public :
         RationalNumber::persistent_function_template->InstanceTemplate()->SetInternalFieldCount(1);
         RationalNumber::persistent_function_template->SetClassName(String::NewSymbol("RationalNumber"));
 
+        // "Class members"
+        RationalNumber::persistent_function_template->Set(String::NewSymbol("gcd"), FunctionTemplate::New(GCD)->GetFunction());
+        RationalNumber::persistent_function_template->Set(String::NewSymbol("lcm"), FunctionTemplate::New(LCM)->GetFunction());
+
         // Instance. 
         RationalNumber::persistent_function_template->InstanceTemplate()->SetAccessor(String::New("numerator"), GetNumerator, SetNumerator);
         RationalNumber::persistent_function_template->InstanceTemplate()->SetAccessor(String::New("denominator"), GetDenominator, SetDenominator);
@@ -154,6 +160,7 @@ public :
 
         target->Set(String::NewSymbol("RationalNumber"), RationalNumber::persistent_function_template->GetFunction());
     }
+
 
     static Handle<Value> GetNumerator(Local<String> property, const AccessorInfo& info) {
         HandleScope scope;
@@ -474,9 +481,88 @@ public :
         
     }
 
+    static Handle<Value> GCD(const Arguments& args) {
+        HandleScope scope;
+        RationalNumber * first_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        RationalNumber * second_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[1]->ToObject());
+        cl_RA a = first_rationalnumber->fraction_;
+        cl_RA b = second_rationalnumber->fraction_;
+        cl_RA new_fraction;
+        Persistent<Object> result = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+
+        if (cln::denominator(a) != 1 || cln::denominator(b) != 1) { // GCD requires integer arguments.
+            ThrowException(Exception::TypeError(String::New("GCD only allowed for integers.")));
+
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            result->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result);
+            
+        }
+
+        cl_I integer_a = cln::numerator(a);
+        cl_I integer_b = cln::numerator(b);
+
+        new_fraction = cln::gcd(integer_a, integer_b);
+        new_rationalnumber_instance->fraction_ = new_fraction;
+        result->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(result);
+        
+    }
+
+    static Handle<Value> LCM(const Arguments& args) {
+        HandleScope scope;
+        cl_RA new_fraction;
+        Persistent<Object> result = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        if (!isHandleForRationalNumber(args[0]->ToObject()) ||
+            !isHandleForRationalNumber(args[1]->ToObject())) {
+            ThrowException(Exception::TypeError(String::New("LCM only works on rational number objects.")));
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            result->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result);
+        }
+
+        RationalNumber * first_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
+        RationalNumber * second_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[1]->ToObject());
+        cl_RA a = first_rationalnumber->fraction_;
+        cl_RA b = second_rationalnumber->fraction_;
+
+
+        if (cln::denominator(a) != 1 || cln::denominator(b) != 1) { // LCM requires integer arguments.
+            ThrowException(Exception::TypeError(String::New("LCM only allowed for integers.")));
+
+            new_rationalnumber_instance->fraction_ = new_fraction;
+            result->SetInternalField(0, External::New(new_rationalnumber_instance));
+            return scope.Close(result);
+            
+        }
+
+        cl_I integer_a = cln::numerator(a);
+        cl_I integer_b = cln::numerator(b);
+
+        new_fraction = cln::lcm(integer_a, integer_b);
+        new_rationalnumber_instance->fraction_ = new_fraction;
+        result->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(result);
+        
+    }
 
 
 };
+
+bool isHandleForRationalNumber(v8::Handle<v8::Object> handle) {
+    HandleScope scope;
+    Local<v8::String> desiredClassName = v8::String::New("RationalNumber");
+    if (handle->GetConstructorName()->Equals(desiredClassName)) {
+        return true;
+    }
+    return false;
+}
 
 v8::Persistent<FunctionTemplate> RationalNumber::persistent_function_template;
 

@@ -235,8 +235,26 @@ function testing() {
     console.log("The result of (-2)^(-2) is:\n", oneFourth.numerator + '/' + oneFourth.denominator);
 
 
-    var bad = new RationalNumber();
-    bad.initializeFromString("poop");
+    var gcdA = new RationalNumber('15');
+    var gcdB = new RationalNumber('18');
+    var gcdResult = RationalNumber.gcd(gcdA, gcdB);
+    console.log("The gcdResult is:\n", gcdResult);
+
+    var lcmA = new RationalNumber('15');
+    var lcmB = new RationalNumber('18');
+    var lcmResult = RationalNumber.lcm(lcmA, lcmB);
+    console.log("The lcmResult is:\n", lcmResult);
+    try {
+        var bad = RationalNumber.lcm(lcmA, 3);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number is:\n", e.toString());
+    }
+    try {
+        var bad = new RationalNumber();
+        bad.initializeFromString("poop");
+    } catch(e) {
+        console.log("The result of initializing from poop is:\n", e.toString());
+    }
 
 }
 
