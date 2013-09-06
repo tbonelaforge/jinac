@@ -11,7 +11,5 @@ CLN - Class Library for Numbers: You must have this package installed on your sy
 
 http://www.ginac.de/CLN/
 
-apt-get - The pre-install script for jinac uses apt-get to download the libcln-dev debian package.
-
 
 
