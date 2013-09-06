@@ -1,4 +1,5 @@
-var rational = require('./build/Release/rationalnumber.node');
+//var rational = require('./build/Release/rationalnumber.node');
+var rational = require('./build/Debug/rationalnumber.node');
 console.log("Inside rationalnumbertest, the result of the require command is:\n");
 console.log(rational);
 var RationalNumber = rational.RationalNumber;
@@ -341,6 +342,11 @@ function testing() {
     console.log("The gcd of zero and zero is:\n", zeroTest);
     zeroTest = RationalNumber.lcm(new RationalNumber('0'), new RationalNumber('0'));
     console.log("The lcm of zero and zero is:\n", zeroTest);
+
+
+    var bigRat = new RationalNumber('134123421/134123420');
+    var floored = bigRat.floor();
+    console.log("The result of flooring the bigRat is:\n", floored);
 
 }
 

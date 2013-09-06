@@ -843,4 +843,18 @@ describe('RationalNumber', function() {
     }); // End lcm block.
 
 
+    describe('floor', function() {
+        it('should compute the floor for rational numbers.', function(done) {
+            var toBeFloored = new RationalNumber('2222223/1111111');
+            var floored = toBeFloored.floor();
+            (floored instanceof RationalNumber).should.eql(true);
+            floored.numerator.should.eql('2');
+            floored.denominator.should.eql('1');
+            done();
+        });
+
+
+    }); // End floor block.
+
+
 });

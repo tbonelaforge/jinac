@@ -1,4 +1,5 @@
 var rational = require('./build/Release/rationalnumber.node');
+//var rational = require('./build/Debug/rationalnumber.node');
 console.log("Inside rationalnumbertest, the result of the require command is:\n");
 console.log(rational);
 var RationalNumber = rational.RationalNumber;
@@ -6,10 +7,12 @@ console.log("The rational number constructor's prototype looks like:\n");
 console.log(RationalNumber.prototype);
 console.log("The add function looks like:\n", RationalNumber.prototype.add);
 function testing() {
-
     var rationalInstance = new RationalNumber();
     console.log("The rationalInstance looks like:\n", rationalInstance);
     console.log("Is the rationalInstance instanceof RationalNumber?", (rationalInstance instanceof RationalNumber) ? 'yes' : 'no');
+
+    var initFromConstructor = new RationalNumber('1/3');
+    console.log("The new rationalInstance from constructor looks like:\n", initFromConstructor);
 
     rationalInstance.numerator = 1;
     console.log("After setting the numerator, the instance looks like:\n", rationalInstance);
@@ -30,7 +33,6 @@ function testing() {
     console.log("After setting the numerator of the result to 6, the result now looks like:\n");
     rationalInstance3.numerator = 6;
     console.log(rationalInstance3);
-
 
     var rationalInstance4 = rationalInstance.subtract(rationalInstance2);
     console.log("The difference between 1/2 and 3/4 is:\n", rationalInstance4);
@@ -55,7 +57,7 @@ function testing() {
     var perfectRoot = perfectSquare.power(oneHalf);
     console.log("The result of (4/9)^(1/2) is:\n", perfectRoot);
 
-    try { // Imperfect even root.
+    try {
         var imperfectRoot = new RationalNumber();
         imperfectRoot.numerator = 2;
         imperfectRoot.denominator = 3;
@@ -63,32 +65,6 @@ function testing() {
     } catch(error) {
         console.log("Got error object:\n", error.toString());
     }
-
-    try { // Imperfect odd root.
-        var imperfectRoot = new RationalNumber();
-        imperfectRoot.numerator = 2;
-        imperfectRoot.denominator = 3;
-        var oneThird = new RationalNumber();
-        oneThird.numerator = 1;
-        oneThird.denominator = 3;
-        var result = imperfectRoot.power(oneThird);
-    } catch(error) {
-        console.log("Got error object:\n", error.toString());
-    }
-
-
-    try { // raising zero to a negative power.
-        var zero = new RationalNumber();
-        zero.numerator = 0;
-        zero.denominator = 1;
-        var negativeOne = new RationalNumber();
-        negativeOne.numerator = -1;
-        negativeOne.denominator = 1;
-        var result = zero.power(negativeOne);
-    } catch(error) {
-        console.log("Got error object:\n", error.toString());
-    }
-
 
     var perfectCube = new RationalNumber();
     perfectCube.initializeFromString("-27/8");
@@ -163,7 +139,6 @@ function testing() {
     } catch(error) {
         console.log("Got error:\n", error.toString());
     }
-
     smallInteger.initializeFromString("-23");
     console.log("About to try and take the factorial of -23.\n");
     try {
@@ -178,7 +153,6 @@ function testing() {
     } catch(error) {
         console.log("Got error:\n", error.toString());
     }
-
     console.log("The result is:\n", factorialResult.numerator);
     var oneMore = new RationalNumber();
     oneMore.initializeFromString("1");
@@ -198,16 +172,14 @@ function testing() {
 
     five.denominator = 2;
     try {
-        r = five.modulus(three);
-        console.log("The result of 5/2 % 3 is:\n", r);
+        five.modulus(three);
     } catch(error) {
         console.log("5/2 % 3Got error:\n", error.toString());
     }
     five.denominator = 1;
     three.denominator = 2;
     try {
-        r = five.modulus(three);
-        console.log("The result of 5 % 3/2 is:\n", r);
+        five.modulus(three);
     } catch(error) {
         console.log("5 % 3/2 Got error:\n", error.toString());
     }
@@ -264,19 +236,123 @@ function testing() {
     console.log("The result of (-2)^(-2) is:\n", oneFourth.numerator + '/' + oneFourth.denominator);
 
 
-    var bad = new RationalNumber();
     try {
-        bad.initializeFromString("poop");
+        var bad = (new RationalNumber('3/1')).add(4);
     } catch(e) {
-        console.log("The error that results from trying to initialize from the string 'poop' is:\n", e.toString());
+        console.log("The result of passing a plain javascript number to add is:\n", e.toString());
     }
 
+    try {
+        var bad = (new RationalNumber('3/1')).subtract(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to subtract is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).multiply(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to multiply is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).divide(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to divide is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).power(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to power is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).modulus(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to modulus is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isEqualTo(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isEqualTo is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isLessThan(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isLessThan is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isGreaterThan(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isGreaterThan is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isGreaterThan(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isGreaterThan is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isLessThanOrEqualTo(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isLessThanOrEqualTo is:\n", e.toString());
+    }
+
+    try {
+        var bad = (new RationalNumber('3/1')).isGreaterThanOrEqualTo(4);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to isGreaterThanOrEqualTo is:\n", e.toString());
+    }
+
+
+    var gcdA = new RationalNumber('15');
+    var gcdB = new RationalNumber('18');
+    var gcdResult = RationalNumber.gcd(gcdA, gcdB);
+    console.log("The gcdResult is:\n", gcdResult);
+
+    var lcmA = new RationalNumber('15');
+    var lcmB = new RationalNumber('18');
+    var lcmResult = RationalNumber.lcm(lcmA, lcmB);
+    console.log("The lcmResult is:\n", lcmResult);
+
+    try {
+        var bad = RationalNumber.lcm(lcmA, 3);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to lcm is:\n", e.toString());
+    }
+
+    try {
+        var bad = RationalNumber.gcd(lcmA, 3);
+    } catch(e) {
+        console.log("The result of passing a plain javascript number to gcd is:\n", e.toString());
+    }
+
+    try {
+        var bad = new RationalNumber();
+        bad.initializeFromString("poop");
+    } catch(e) {
+        console.log("The result of initializing from poop is:\n", e.toString());
+    }
+
+    var zeroTest = RationalNumber.gcd(new RationalNumber('0'), new RationalNumber('0'));
+    console.log("The gcd of zero and zero is:\n", zeroTest);
+    zeroTest = RationalNumber.lcm(new RationalNumber('0'), new RationalNumber('0'));
+    console.log("The lcm of zero and zero is:\n", zeroTest);
+
+
+    var bigRat = new RationalNumber('134123421/134123420');
+    var floored = bigRat.floor();
+    console.log("The result of flooring the bigRat is:\n", floored);
+
+}
+for (var i = 0; i < 25; i++) {
+    testing();    
 }
 
-for (var i = 0; i < 25; i++) {
-//for (var i = 0; i < 1; i++) {
-    testing();
-}
 
 
 var count = 0;
@@ -289,4 +365,5 @@ function logger() {
         process.exit(0);
     }
 }
+
 logInterval = setInterval(logger, 2000);

@@ -155,6 +155,7 @@ public :
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("factorial"), FunctionTemplate::New(Factorial)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("getFactorialMax"), FunctionTemplate::New(GetFactorialMax)->GetFunction());
         RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("modulus"), FunctionTemplate::New(Modulus)->GetFunction());
+        RationalNumber::persistent_function_template->PrototypeTemplate()->Set(String::NewSymbol("floor"), FunctionTemplate::New(Floor)->GetFunction());
 
         constructor_ = Persistent<Function>::New(RationalNumber::persistent_function_template->GetFunction());
 
@@ -531,6 +532,24 @@ public :
         return scope.Close(factorial_max);
     }
 
+    static Handle<Value> Floor(const Arguments& args) {
+        HandleScope scope;
+        Persistent<Object> result = Persistent<Object>::New(
+            RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
+        );
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
+        cl_RA self_fraction = self->fraction_;
+        cl_RA new_fraction; // In case we need to throw an exception.
+
+
+        new_rationalnumber_instance->fraction_ = cln::floor1(self_fraction);
+        result->SetInternalField(0, External::New(new_rationalnumber_instance));
+        return scope.Close(result);
+    
+    }
+
+
     static Handle<Value> Modulus(const Arguments& args) {
         HandleScope scope;
         Persistent<Object> remainder = Persistent<Object>::New(
@@ -563,6 +582,9 @@ public :
         return scope.Close(remainder);
         
     }
+
+
+
 
     static Handle<Value> GCD(const Arguments& args) {
         HandleScope scope;
