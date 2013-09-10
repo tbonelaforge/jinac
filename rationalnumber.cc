@@ -103,6 +103,7 @@ int matches_fraction_pattern(const char * input) {
 }
 
 bool isHandleForRationalNumber(v8::Handle<v8::Object>);
+void weakRationalNumberCallback(Persistent<Value> object, void* parameter);
 
 
 class RationalNumber : node::ObjectWrap {
@@ -210,9 +211,11 @@ public :
         Persistent<Object> sum = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
-        cl_RA new_fraction;
-        RationalNumber * new_rationalnumber_instance = new RationalNumber();
 
+        RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        sum.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
+
+        cl_RA new_fraction;
 
         if (!isHandleForRationalNumber(args[0]->ToObject())) {
             ThrowException(Exception::TypeError(String::New("add only works on rational number objects.")));
@@ -234,7 +237,11 @@ public :
         Persistent<Object> difference = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+        
+        
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        difference.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
+
         cl_RA new_fraction;
 
         if (!isHandleForRationalNumber(args[0]->ToObject())) {
@@ -244,11 +251,11 @@ public :
             return scope.Close(difference);
         }
 
-
         RationalNumber * this_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         RationalNumber * that_rationalnumber = node::ObjectWrap::Unwrap<RationalNumber>(args[0]->ToObject());
         new_fraction = this_rationalnumber->fraction_ - that_rationalnumber->fraction_;
         new_rationalnumber_instance->fraction_ = new_fraction;
+
         difference->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(difference);
     }
@@ -258,7 +265,10 @@ public :
         Persistent<Object> product = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        product.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
+        
         cl_RA new_fraction;
 
         if (!isHandleForRationalNumber(args[0]->ToObject())) {
@@ -281,7 +291,10 @@ public :
         Persistent<Object> quotient = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+        
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        quotient.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
+
         cl_RA new_fraction;
 
         if (!isHandleForRationalNumber(args[0]->ToObject())) {
@@ -311,7 +324,9 @@ public :
         Persistent<Object> result_object = Persistent<Object>::New(
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
+
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        result_object.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
         cl_RA root_fraction, result_fraction;
 
         if (!isHandleForRationalNumber(args[0]->ToObject())) {
@@ -486,6 +501,7 @@ public :
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        result.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         cl_RA self_fraction = self->fraction_;
         cl_RA new_fraction; // In case we need to throw an exception.
@@ -527,6 +543,7 @@ public :
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        factorial_max.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
         new_rationalnumber_instance->fraction_ = FACTORIAL_MAX;
         factorial_max->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(factorial_max);
@@ -538,15 +555,14 @@ public :
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        result.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
         RationalNumber * self = node::ObjectWrap::Unwrap<RationalNumber>(args.This());
         cl_RA self_fraction = self->fraction_;
         cl_RA new_fraction; // In case we need to throw an exception.
 
-
         new_rationalnumber_instance->fraction_ = cln::floor1(self_fraction);
         result->SetInternalField(0, External::New(new_rationalnumber_instance));
         return scope.Close(result);
-    
     }
 
 
@@ -556,6 +572,7 @@ public :
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        remainder.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
         cl_RA new_fraction;
 
         if (!isHandleForRationalNumber(args[0]->ToObject())) {
@@ -593,6 +610,7 @@ public :
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        result.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
 
         if (!isHandleForRationalNumber(args[0]->ToObject()) ||
             !isHandleForRationalNumber(args[1]->ToObject())) {
@@ -633,6 +651,7 @@ public :
             RationalNumber::persistent_function_template->InstanceTemplate()->NewInstance()
         );
         RationalNumber * new_rationalnumber_instance = new RationalNumber();
+        result.MakeWeak(new_rationalnumber_instance, weakRationalNumberCallback);
 
         if (!isHandleForRationalNumber(args[0]->ToObject()) ||
             !isHandleForRationalNumber(args[1]->ToObject())) {
@@ -667,7 +686,6 @@ public :
         
     }
 
-
 };
 
 bool isHandleForRationalNumber(v8::Handle<v8::Object> handle) {
@@ -683,6 +701,13 @@ v8::Persistent<FunctionTemplate> RationalNumber::persistent_function_template;
 
 v8::Persistent<Function> RationalNumber::constructor_;
 
+void weakRationalNumberCallback(Persistent<Value> object, void* parameter) {
+    RationalNumber *rational = static_cast<RationalNumber*>(parameter);
+    delete rational;
+    object.Dispose();
+    object.Clear();
+}
+
 extern "C" {
     static void init(Handle<Object> target) {
         RationalNumber::Init(target);
@@ -690,3 +715,5 @@ extern "C" {
 
     NODE_MODULE(rationalnumber, init);
 }
+
+
