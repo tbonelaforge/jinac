@@ -1,10 +1,5 @@
 #Jinac Documentation
-***
-*Author:* Terry Ford
 
-*Created:* 09/23/2013
-
-*Version:* 0.1.33
 ***
 Jinac is an addon to node.js which enables arbitrarily precise rational numbers, and ways of manipulating them without losing precision.
 
