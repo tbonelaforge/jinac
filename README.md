@@ -24,8 +24,6 @@ For example, this module can perform
  in about a quarter of a second.
 
 
-###ONLY WORKS ON DEBIAN LINUX!
-
 Dependencies:
 
 CLN - Class Library for Numbers: You must have this package installed on your system in order to use jinac.
@@ -33,8 +31,14 @@ CLN - Class Library for Numbers: You must have this package installed on your sy
 http://www.ginac.de/CLN/
 ***
 
-##Installation (linux systems)
+##Installation
+
+### linux systems
 1. sudo apt-get install libcln-dev
+2. npm install jinac
+
+### Mac OS X systems
+1. sudo brew install cln
 2. npm install jinac
 
 ##Examples
