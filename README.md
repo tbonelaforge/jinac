@@ -33,8 +33,12 @@ http://www.ginac.de/CLN/
 
 ##Installation
 
-### linux systems
+### Debian Linux Systems 
 1. sudo apt-get install libcln-dev
+2. npm install jinac
+
+### RedHat Linux Systems
+1. sudo yum install cln-devel
 2. npm install jinac
 
 ### Mac OS X systems
