@@ -1,17 +1,22 @@
 {
-    "name" : "jinac",
-    "version" : "v0.1.37",
-    "author" : {
-        "name" : "Terrance Ford"
-    },
-    "description" : "Exposes C++ computer algebra libraries to JS",
-    "homepage" : "https://github.com/tbonelaforge/jinac",
-    "scripts" : {
-        "preinstall" : "node-gyp rebuild",
-        "preuninstall" : "rm -rf build/*"
-    },
-    "main" : "build/Release/rationalnumber.node",
-    "devDependencies": {
-        "should":   ">= 1.2.2"
-    }
+  "name" : "jinac",
+  "version" : "v0.1.38",
+  "author" : {
+    "name" : "Terrance Ford"
+  },
+  "description" : "Exposes C++ computer algebra libraries to JS",
+  "licenses": [{
+    "type": "MIT",
+    "url": "https://raw.github.com/tbonelaforge/jinac/master/LICENSE"
+  }],
+
+  "homepage" : "https://github.com/tbonelaforge/jinac",
+  "scripts" : {
+    "preinstall" : "node-gyp rebuild",
+    "preuninstall" : "rm -rf build/*"
+  },
+  "main" : "build/Release/rationalnumber.node",
+  "devDependencies": {
+    "should":   ">= 1.2.2"
+  }
 }
