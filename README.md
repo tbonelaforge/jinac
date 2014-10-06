@@ -42,8 +42,9 @@ http://www.ginac.de/CLN/
 2. npm install jinac
 
 ### Mac OS X systems
-1. sudo brew install cln
-2. npm install jinac
+1. brew install cln
+2. brew link cln
+3. npm install jinac
 
 ##Examples
 ###Constructing
